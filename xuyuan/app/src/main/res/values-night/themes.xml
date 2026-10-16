@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  深色模式下的窗口主题。
+
+  不补这个文件的话，系统深色模式下 Activity 的窗口背景仍是浅色的
+  （values/themes.xml 里继承的是 Theme.Material.Light），
+  冷启动瞬间会白屏闪一下，然后才切到 Compose 的深色界面。
+
+  Compose 自己负责实际配色，这里只是让「窗口背景」跟着系统走。
+-->
+<resources>
+    <style name="Theme.MyApplication" parent="android:Theme.Material.NoActionBar" />
+</resources>

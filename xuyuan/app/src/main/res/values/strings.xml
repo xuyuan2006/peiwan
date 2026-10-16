@@ -1,0 +1,4 @@
+<resources>
+    <!-- 应用名：桌面图标下方显示的文字，同时登录页标题也读它（stringResource(R.string.app_name)） -->
+    <string name="app_name">我来同你玩</string>
+</resources>

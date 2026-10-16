@@ -1,0 +1,2 @@
+# 禁止通过 HTTP 访问 SQL 脚本
+Require all denied

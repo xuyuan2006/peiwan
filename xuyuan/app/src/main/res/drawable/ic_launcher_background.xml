@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  应用图标 · 背景层（自适应图标）
+
+  品牌主色紫，加一层从上到下的轻微渐变 —— 纯色在圆形遮罩下会显得很平，
+  渐变能让图标在圆形/圆角方形两种遮罩下都有层次。
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <path android:pathData="M0,0h108v108h-108z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="0"
+                android:startY="0"
+                android:endX="0"
+                android:endY="108"
+                android:type="linear">
+                <item android:color="#FF7B6CF0" android:offset="0.0" />
+                <item android:color="#FF5744D6" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+</vector>

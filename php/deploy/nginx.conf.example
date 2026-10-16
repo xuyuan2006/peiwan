@@ -1,0 +1,105 @@
+# ============================================================
+# 陪玩点单系统 · Nginx 站点配置示例
+#
+# 关键点：root 必须指向项目的 public 目录，这样 app/、config/、
+#         sql/、cron/ 都在 Web 根目录之外，不会被下载。
+#
+# 用法：把本文件内容粘贴到站点的 Nginx 配置里（宝塔：站点 → 配置文件），
+#       按需修改 server_name、root 和 fastcgi_pass。
+# ============================================================
+
+server {
+    listen       80;
+    server_name  peiwang.example.com;
+
+    # ★ 运行目录：项目下的 public
+    root   /www/wwwroot/peiwang/public;
+    index  index.php index.html;
+
+    charset utf-8;
+    client_max_body_size 8m;      # 允许上传头像/转账凭证
+
+    access_log /www/wwwlogs/peiwang.access.log;
+    error_log  /www/wwwlogs/peiwang.error.log;
+
+    # ---------- 安全：即使运行目录被误设成项目根目录，也拒绝这些路径 ----------
+    location ~ ^/(app|config|sql|cron|deploy)/ {
+        deny all;
+        return 404;
+    }
+
+    # 上传目录禁止执行任何脚本
+    location ~* ^/uploads/.*\.(php|php5|phtml|pht|phar)$ {
+        deny all;
+    }
+
+    # 部署完成后建议再关掉这两个入口
+    # location ~ ^/(install|check|selftest|demo)\.php$ {
+    #     deny all;
+    # }
+
+    # ---------- 后台入口可选：限制来源 IP ----------
+    # location = /admin/index.php {
+    #     allow 203.0.113.10;      # 改成你的固定 IP
+    #     deny all;
+    #     include fastcgi_params;
+    #     fastcgi_pass unix:/tmp/php-cgi-74.sock;
+    #     fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    # }
+
+    # ---------- 静态资源 ----------
+    location ~* \.(css|js|png|jpe?g|gif|webp|svg|ico|woff2?|ttf)$ {
+        expires 7d;
+        access_log off;
+        try_files $uri =404;
+    }
+
+    # ---------- 动态请求 ----------
+    # 本项目使用 ?r=控制器/方法 路由，不需要额外的 rewrite 规则
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        try_files $uri =404;
+
+        # ★ 改成你的 PHP-FPM 地址：
+        #   宝塔默认 unix:/tmp/php-cgi-74.sock（按实际 PHP 版本改数字）
+        #   或 127.0.0.1:9000
+        fastcgi_pass   unix:/tmp/php-cgi-74.sock;
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include        fastcgi_params;
+
+        fastcgi_read_timeout 120s;
+        fastcgi_buffer_size 128k;
+        fastcgi_buffers 8 128k;
+    }
+}
+
+# ============================================================
+# HTTPS 版本（推荐上线使用）：把上面的 80 端口块替换为下面内容，
+# 证书路径用你自己的（宝塔申请证书后会自动生成类似路径）。
+# ============================================================
+# server {
+#     listen 443 ssl http2;
+#     server_name peiwang.example.com;
+#     root /www/wwwroot/peiwang/public;
+#     index index.php index.html;
+#
+#     ssl_certificate     /www/server/panel/vhost/cert/peiwang/fullchain.pem;
+#     ssl_certificate_key /www/server/panel/vhost/cert/peiwang/privkey.pem;
+#     ssl_protocols       TLSv1.2 TLSv1.3;
+#     ssl_ciphers         ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384;
+#     ssl_prefer_server_ciphers on;
+#
+#     add_header Strict-Transport-Security "max-age=31536000" always;
+#
+#     # ……其余 location 规则与上面的 80 端口块完全一致……
+# }
+#
+# server {
+#     listen 80;
+#     server_name peiwang.example.com;
+#     return 301 https://$host$request_uri;
+# }

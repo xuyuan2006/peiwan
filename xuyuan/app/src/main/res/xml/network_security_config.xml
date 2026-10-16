@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  后端目前是 http://103.47.80.215/（非 HTTPS），
+  而 Android 9（API 28）起默认禁止明文流量，因此必须在这里显式放行，
+  否则所有网络请求直接失败（列表打不开、登录转圈、提示「网络错误」）。
+
+  ★ 只放行我们自己的后端，其余站点仍然禁止明文，不要图省事改成全局 usesCleartextTraffic。
+  ★ 后端以后配好 HTTPS（宝塔可一键申请 Let's Encrypt），把下面整个 domain-config 删掉即可。
+
+  ⚠️ 换服务器 / 换域名时**必须同步修改这里**，否则 App 会连不上新地址。
+     完整迁移步骤见项目根目录的 MIGRATION.md。
+-->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">103.47.80.215</domain>
+    </domain-config>
+</network-security-config>
