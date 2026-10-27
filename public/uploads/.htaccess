@@ -1,0 +1,4 @@
+# 禁止直接访问上传目录中的可执行文件
+<FilesMatch "\.(php|php5|phtml|pht|phar)$">
+    Require all denied
+</FilesMatch>
